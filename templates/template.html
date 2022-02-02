@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FilePlus</title>
+    <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='font-awesome/css/font-awesome.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='css/plugins/iCheck/custom.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='css/animate.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='css/plugins/dropzone/basic.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='css/plugins/dropzone/dropzone.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='css/style.css') }}" rel="stylesheet">
+
+    <!-- Mainly scripts -->
+    <script src="{{ url_for('static',filename='js/jquery-3.1.1.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/bootstrap.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/plugins/metisMenu/jquery.metisMenu.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/plugins/slimscroll/jquery.slimscroll.min.js') }}"></script>
+
+    <!-- Peity -->
+    <script src="{{ url_for('static',filename='js/plugins/peity/jquery.peity.min.js') }}"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="{{ url_for('static',filename='js/inspinia.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/plugins/pace/pace.min.js') }}"></script>
+
+    <!-- iCheck -->
+    <script src="{{ url_for('static',filename='js/plugins/iCheck/icheck.min.js') }}"></script>
+
+    <!-- Peity -->
+    <script src="{{ url_for('static',filename='js/demo/peity-demo.js') }}"></script>
+
+    <!-- DROPZONE -->
+    <script src="{{ url_for('static',filename='js/plugins/dropzone/dropzone.js') }}"></script>
+</head>
+<body>
+    <div id="wrapper">
+
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav metismenu" id="side-menu">
+                <li class="nav-header">
+                    <div class="dropdown profile-element">
+                        <img alt="image" class="" src="{{ url_for('static',filename='img/top_logo.png') }}" width="140" style="border-radius:5%;"/>
+                    </div>
+                    <div class="logo-element">
+                        FILE+
+                    </div>
+                </li>
+                <li>
+                    <a href="/filelist"><i class="fa fa-th-large"></i> <span class="nav-label">동영상 업로드</span></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+        <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom">
+        <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+        </div>
+            <ul class="nav navbar-top-links navbar-right">
+                <li>
+                    <span class="m-r-sm text-muted welcome-message"></span>
+                </li>
+                <li>
+                    <a href="/">
+                        <i class="fa fa-sign-out"></i> Log out
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        </div>
+
+            {% block content %}{% endblock %}
+
+            <div class="footer">
+                <div>
+                    <strong></strong>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+<script>
+    $(document).ready(function(){
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-green',
+            radioClass: 'iradio_square-green',
+        });
+    });
+</script>
+
+</body>
+
+</html>

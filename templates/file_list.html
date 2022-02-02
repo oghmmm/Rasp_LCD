@@ -1,0 +1,188 @@
+{% extends "template.html" %}
+{% block content %}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>File Manage</h2>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+
+        {% for directory in directories %}
+            <div class="col-lg-4">
+                <div class="ibox ">
+                    <div class="ibox-title">
+                        <h5>{{directory}} 호기</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <!--<th><input type="checkbox" class="i-checks" name="input[]"></th>-->
+                                <th>File Name</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            {% if files[directory] %}
+                                {% for file in files[directory] %}
+                                    <tr>
+                                        <!--<td><input type="checkbox" class="i-checks" name="input[]"></td>-->
+                                        <td>{{file}}</td>
+                                        <td><a href="javascript:fileDel('{{directory}}', '{{file}}');"><span class="badge badge-danger">DEL</span></a></td>
+                                    </tr>
+                                {% endfor %}
+
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-center">데이터가 없습니다</td>
+                                </tr>
+                            {% endif %}
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>파일업로드</h5>
+                    <button class="btn btn-success" type="button" id="btnSubmit"><i class="fa fa-upload"></i>&nbsp;&nbsp;<span class="bold">업로드</span></button>
+                    <button class="btn btn-warning" type="button" id="btnAllClear"><i class="fa fa-warning"></i>&nbsp;&nbsp;<span class="bold">초기화</span></button>
+                </div>
+                <div class="ibox-tools"></div>
+                <div class="ibox-content">
+                    <form action="/fileUpload" class="dropzone" id="dropzoneForm">
+                        <p>
+                            <!--<input type="checkbox" class="i-checks" name="uploadChkAll" id="uploadChkAll" checked="checked"> <b>전체</b>&nbsp;-->
+                            <span class="badge badge-success" id="chkAll">전체선택</span>
+                            <span class="badge badge-warning" id="unchkAll">전체해제</span>
+
+                            {% for directory in directories %}
+                            <input type="checkbox" class="i-checks" name="uploadChk" value="{{directory}}" checked="checked"> {{directory}}호기 &nbsp;
+                            {% endfor %}
+                        </p>
+                        <div class="fallback">
+                            <input name="file" type="file" multiple />
+                        </div>
+                    </form>
+
+                    <hr>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    $(document).ready(function() {
+
+        $("#chkAll").on('click', function(event){
+            $("input[name=uploadChk]").iCheck('check');
+        });
+
+        $("#unchkAll").on('click', function(event){
+            $("input[name=uploadChk]").iCheck('uncheck');
+        });
+
+
+        /*
+        $(document).on("ifClicked","input:checkbox[name=uploadChk]",function(){
+            setTimeout(function() {
+                var total = $("input[name=uploadChk]").length;
+                var checked = $("input[name=uploadChk]:checked").length;
+
+                if(total != checked) $("input[name=uploadChkAll]").iCheck('uncheck');
+                else $("input[name=uploadChkAll]").iCheck('check');
+            }, 100);
+        });
+        */
+
+	});
+
+    Dropzone.options.dropzoneForm = {
+        paramName: "file",
+        maxFilesize: 500,
+        parallelUploads: 100,
+        maxFiles: 100,
+        method: 'post',
+        //acceptedFiles: ".jpeg,.jpg,.png,.gif,.JPEG,.JPG,.PNG,.GIF",
+        autoProcessQueue: false,
+        dictDefaultMessage: "<strong>전송할 호기를 체크후 파일을 선택 또는 드래그 해주세요.</strong>",
+
+        init: function () {
+                var submitButton = document.querySelector("#btnSubmit");
+                var allClearButton = document.querySelector("#btnAllClear");
+
+                myDropzone = this; // closure
+
+                submitButton.addEventListener("click", function () {
+                    fileCnt = myDropzone.getAcceptedFiles().length;
+                    checkedCnt = $("input[name=uploadChk]:checked").length;
+
+                    if(fileCnt == 0) {
+                        alert("업로드 할 파일을 선택해 주세요.");
+                        return false;
+                    } else if(checkedCnt == 0) {
+                        alert("업로드 할 호기를 선택해 주세요.");
+                        return false;
+                    } else {
+                        myDropzone.processQueue();
+                    }
+                });
+
+                allClearButton.addEventListener("click", function () {
+                    if(!confirm("전송할 파일을 초기화하시겠습니까?")) return;
+                    myDropzone.removeAllFiles(true);
+                });
+
+                myDropzone.on("complete", function(file) {
+                    if(myDropzone.getUploadingFiles().length == 0) {
+                        setTimeout(function(){
+                            alert("처리 완료되었습니다");
+                        },1000);
+
+                        setTimeout(function(){
+                            location.reload();
+                        },1000);
+                    }
+                });
+        }
+    };
+
+    function fileDel(hogi, fName) {
+        if(!confirm(hogi + "호기에서 " + fName + "파일을 삭제하시겠습니까?")) return;
+
+        $.ajax({
+            type: "POST",
+            url: "/fileDelete",
+            data:"hogi="+hogi+"&fName="+fName,
+            dataType: 'json',
+            success: function(data){
+                if(data.result == 'success') {
+                    alert("정상적으로 삭제되었습니다");
+                    location.reload();
+                } else {
+                    alert("작업이 실패하였습니다");
+                }
+            },
+            error: function(request, status, error) {
+                alert("error:"+error+"\n"+"code:"+request.status+"\n"+"message:"+request.responseText+"\n");
+            }
+        });
+
+    }
+
+</script>
+{% endblock %}
